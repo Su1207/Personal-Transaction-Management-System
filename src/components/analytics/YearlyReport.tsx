@@ -13,6 +13,7 @@ import { getYearlyAnalytics } from "@/services/api";
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { YearlyReportData } from "@/lib/types";
+import { useAuthStore } from "@/lib/store/authStore";
 
 ChartJS.register(
   LineElement,
@@ -149,9 +150,16 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     monthlySavings: {},
   });
 
+  const { user } = useAuthStore();
+
   useEffect(() => {
-    fetchYearlyAnalytics(year);
-  }, [year, fetchYearlyAnalytics]);
+    if (user) {
+      fetchYearlyAnalytics(year).catch((error) => {
+        console.error("Error fetching yearly analytics:", error);
+        toast.error("Failed to load yearly report data");
+      });
+    }
+  }, [year, fetchYearlyAnalytics, user]);
 
   useEffect(() => {
     if (yearData) {

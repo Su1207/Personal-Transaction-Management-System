@@ -11,6 +11,7 @@ import {
 import { getMonthlyAnalytics } from "@/services/api";
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
+import { useAuthStore } from "@/lib/store/authStore";
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -127,12 +128,15 @@ type monthlyProp = {
 const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
   const { monthData, monthLoading, fetchMonthlyAnalytics } =
     useTransactionStore();
+  const { user } = useAuthStore();
   useEffect(() => {
-    fetchMonthlyAnalytics(year, month).catch((error) => {
-      console.error("Error fetching monthly analytics:", error);
-      toast.error("Failed to load monthly report data.");
-    });
-  }, [month, year, fetchMonthlyAnalytics]);
+    if (user) {
+      fetchMonthlyAnalytics(year, month).catch((error) => {
+        console.error("Error fetching monthly analytics:", error);
+        toast.error("Failed to load monthly report data.");
+      });
+    }
+  }, [month, year, user, fetchMonthlyAnalytics]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
