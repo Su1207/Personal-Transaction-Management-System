@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "types": ["vite/client"],
+    "target": "ES2020" /* Modern target for better performance and features */,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES6",
+      "es2017"
+    ] /* Include DOM types for React */,
+    "jsx": "react-jsx" /* Modern JSX transform (React 17+) */,
+
+    /* Modules */
+    "module": "ESNext" /* Use ESNext for better tree shaking */,
+    "moduleResolution": "bundler" /* Modern module resolution */,
+    "allowImportingTsExtensions": true /* Allow .ts/.tsx imports */,
+    "resolveJsonModule": true /* Enable importing .json files */,
+    "isolatedModules": true /* Required for Vite/modern bundlers */,
+
+    /* JavaScript Support */
+    "allowJs": true /* Allow JS files during migration */,
+    "checkJs": false /* Don't check JS files initially */,
+
+    /* Emit */
+    "noEmit": true /* Let bundler handle compilation */,
+    "declaration": false /* Not needed for apps */,
+    "sourceMap": true /* Enable source maps for debugging */,
+
+    /* Interop Constraints */
+    "esModuleInterop": true /* Better CommonJS interop */,
+    "allowSyntheticDefaultImports": true /* Allow default imports */,
+    "forceConsistentCasingInFileNames": true /* Enforce consistent casing */,
+
+    /* Type Checking */
+    "strict": true /* Enable strict mode */,
+    "noImplicitAny": true /* Catch implicit any types */,
+    "strictNullChecks": true /* Strict null checking */,
+    "strictFunctionTypes": true /* Strict function types */,
+    "noImplicitReturns": true /* Require explicit returns */,
+    "noFallthroughCasesInSwitch": true /* Catch switch fallthrough */,
+    "noUncheckedIndexedAccess": true /* Add undefined to indexed access */,
+    "noImplicitOverride": true /* Require override keyword */,
+
+    /* Additional Helpful Options */
+    "skipLibCheck": true /* Skip checking node_modules */,
+    "useUnknownInCatchVariables": true /* Use unknown instead of any in catch */,
+    "exactOptionalPropertyTypes": true /* Strict optional properties */,
+
+    "baseUrl": ".", // <--- Add this
+    "paths": {
+      "@/*": ["src/*"] // <--- And this for '@/components/...'
+    }
+  },
+  "include": ["src/**/*", "src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build"]
+}
