@@ -10,9 +10,7 @@ import {
   Transaction,
   TransactionData,
   YearlyRawItem,
-  YearlyReportData,
 } from "../types";
-import { useAuthStore } from "./authStore";
 
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;

@@ -9,11 +9,9 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { getYearlyAnalytics } from "@/services/api";
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { YearlyReportData } from "@/lib/types";
-import { useAuthStore } from "@/lib/store/authStore";
 import { Skeleton } from "../ui/skeleton";
 
 ChartJS.register(
@@ -151,16 +149,12 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     monthlySavings: {},
   });
 
-  const { user } = useAuthStore();
-
   useEffect(() => {
-    if (user?.id) {
-      fetchYearlyAnalytics(year).catch((error) => {
-        console.error("Error fetching yearly analytics:", error);
-        toast.error("Failed to load yearly report data");
-      });
-    }
-  }, [year, fetchYearlyAnalytics, user, yearLoading]);
+    fetchYearlyAnalytics(year).catch((error) => {
+      console.error("Error fetching yearly analytics:", error);
+      toast.error("Failed to load yearly report data");
+    });
+  }, [year, fetchYearlyAnalytics, yearLoading]);
 
   useEffect(() => {
     if (yearData) {

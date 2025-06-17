@@ -19,5 +19,5 @@ export default function ProtectedRoute({
     }
   }, [hasHydrated, user]);
 
-  return <>{user && children}</>;
+  return <>{user && hasHydrated && children}</>;
 }

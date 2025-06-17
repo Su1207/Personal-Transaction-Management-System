@@ -4,22 +4,18 @@ import { useEffect } from "react";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
-import { useAuthStore } from "@/lib/store/authStore";
 
 export default function TransactionTable() {
   const { transactions, fetchTransactions, loading } = useTransactionStore();
-  const { user } = useAuthStore();
 
   useEffect(() => {
-    if (user?.id) {
-      fetchTransactions().catch((err) =>
-        toast.error("Error fetching transactions:", err)
-      );
-    }
-  }, [fetchTransactions, user]);
+    fetchTransactions().catch((err) =>
+      toast.error("Error fetching transactions:", err)
+    );
+  }, [fetchTransactions]);
   console.log("TransactionTable data:", transactions);
 
-  if (!transactions.length && loading && !user?.id) {
+  if (!transactions.length && loading) {
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />
