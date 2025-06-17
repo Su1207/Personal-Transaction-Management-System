@@ -19,12 +19,12 @@ const Login = () => {
     setLoading(true);
     const result = await login(username, password);
 
-    if (result.success) {
+    if (result?.success) {
       toast("Login successful!", {
         description: `Welcome, ${username}!`,
         duration: 3000,
       });
-      window.location.href = "/";
+      navigate("/");
     } else {
       setError(result.error || "Login failed");
     }
