@@ -24,10 +24,7 @@ const Login = () => {
         description: `Welcome, ${username}!`,
         duration: 3000,
       });
-
-      setTimeout(() => {
-        navigate("/");
-      }, 500);
+      navigate("/");
     } else {
       setError(result.error || "Login failed");
     }
