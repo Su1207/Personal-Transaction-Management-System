@@ -1,4 +1,3 @@
-"use client";
 import { useEffect } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useNavigate } from "react-router-dom";
