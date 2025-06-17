@@ -187,7 +187,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
       </div>
     );
 
-  if (!yearData && !yearLoading)
+  if (!yearData)
     return (
       <div className="p-6 bg-gray-900 rounded-lg">
         <p className="text-red-400">No yearly report data found.</p>

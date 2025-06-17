@@ -132,7 +132,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
       console.error("Error fetching monthly analytics:", error);
       toast.error("Failed to load monthly report data.");
     });
-  }, [month, year, fetchMonthlyAnalytics, monthLoading]);
+  }, [month, year, fetchMonthlyAnalytics]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
@@ -164,7 +164,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     );
   }
 
-  if (!monthData && !monthLoading) {
+  if (!monthData) {
     return (
       <div className="p-6 bg-gray-900 rounded-lg">
         <p className="text-red-400">No report data available.</p>
