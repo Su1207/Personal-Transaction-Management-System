@@ -161,7 +161,18 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     return months[monthNum - 1] || monthNum;
   };
 
-  if (monthLoading && !hasHydrated) {
+  const incomeChartData = formatPieChartData(
+    monthData.incomeByCategory,
+    incomeColors,
+    "Income"
+  );
+  const expenseChartData = formatPieChartData(
+    monthData.expenseByCategory,
+    expenseColors,
+    "Expenses"
+  );
+
+  if (monthLoading) {
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />
@@ -180,17 +191,6 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
       </div>
     );
   }
-
-  const incomeChartData = formatPieChartData(
-    monthData.incomeByCategory,
-    incomeColors,
-    "Income"
-  );
-  const expenseChartData = formatPieChartData(
-    monthData.expenseByCategory,
-    expenseColors,
-    "Expenses"
-  );
 
   return (
     <div className="p-6 bg-gray-900 rounded-lg space-y-6">

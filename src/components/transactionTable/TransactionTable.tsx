@@ -21,11 +21,11 @@ export default function TransactionTable() {
           toast.error("Error fetching transactions: " + err.message)
         );
     }
-  }, [user?.id, hasHydrated]);
+  }, [user, hasHydrated, loading]);
 
   console.log("TransactionTable data:", transactions);
 
-  if (!transactions.length && loading) {
+  if (loading) {
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />
