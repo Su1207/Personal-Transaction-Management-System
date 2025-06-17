@@ -21,7 +21,7 @@ export default function TransactionTable() {
           toast.error("Error fetching transactions: " + err.message)
         );
     }
-  }, [user, hasHydrated, loading]);
+  }, [user, hasHydrated]);
 
   console.log("TransactionTable data:", transactions);
 
