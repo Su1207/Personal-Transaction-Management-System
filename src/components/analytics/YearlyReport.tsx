@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { YearlyReportData } from "@/lib/types";
 import { useAuthStore } from "@/lib/store/authStore";
+import { Skeleton } from "../ui/skeleton";
 
 ChartJS.register(
   LineElement,
@@ -153,7 +154,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       fetchYearlyAnalytics(year).catch((error) => {
         console.error("Error fetching yearly analytics:", error);
         toast.error("Failed to load yearly report data");
@@ -183,8 +184,12 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
 
   if (yearLoading)
     return (
-      <div className="p-6 bg-gray-900 rounded-lg">
-        <p className="text-gray-400">Loading yearly report...</p>
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
       </div>
     );
 

@@ -6,16 +6,21 @@ import { toast } from "sonner";
 import { useCategoryStore } from "@/lib/store/categoryStore";
 import { CategoryDialog } from "@/components/dialogButton/CategoryDialog";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuthStore } from "@/lib/store/authStore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Category = () => {
   const { fetchCategories, categories, loading } = useCategoryStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    fetchCategories().catch((error) => {
-      console.error("Error fetching categories:", error);
-      toast.error("Failed to load categories");
-    });
-  }, [fetchCategories]);
+    if (user?.id) {
+      fetchCategories().catch((error) => {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories");
+      });
+    }
+  }, [fetchCategories, user]);
 
   const handleUpdate = (category: Category) => {
     console.log("Update category:", category);
@@ -68,6 +73,18 @@ const Category = () => {
 
   const renderActionsCell = (category: Category) => {
     const canModify = !category.default;
+
+    if (loading) {
+      return (
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+      );
+    }
 
     if (!canModify) {
       return (

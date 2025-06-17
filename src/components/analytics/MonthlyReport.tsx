@@ -12,6 +12,7 @@ import { getMonthlyAnalytics } from "@/services/api";
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { useAuthStore } from "@/lib/store/authStore";
+import { Skeleton } from "../ui/skeleton";
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -130,7 +131,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     useTransactionStore();
   const { user } = useAuthStore();
   useEffect(() => {
-    if (user) {
+    if (user?.id && month && year) {
       fetchMonthlyAnalytics(year, month).catch((error) => {
         console.error("Error fetching monthly analytics:", error);
         toast.error("Failed to load monthly report data.");
@@ -158,8 +159,12 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
 
   if (monthLoading) {
     return (
-      <div className="p-6 bg-gray-900 rounded-lg">
-        <p className="text-gray-400">Loading monthly report...</p>
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
       </div>
     );
   }
