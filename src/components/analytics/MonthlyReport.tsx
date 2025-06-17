@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -8,7 +8,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { getMonthlyAnalytics } from "@/services/api";
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -132,12 +131,13 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
   const { user } = useAuthStore();
   useEffect(() => {
     if (user?.id && month && year) {
+      console.log(user);
       fetchMonthlyAnalytics(year, month).catch((error) => {
         console.error("Error fetching monthly analytics:", error);
         toast.error("Failed to load monthly report data.");
       });
     }
-  }, [month, year, user, fetchMonthlyAnalytics]);
+  }, [month, year, user, fetchMonthlyAnalytics, monthLoading]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
@@ -169,7 +169,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     );
   }
 
-  if (!monthData) {
+  if (!monthData && !monthLoading) {
     return (
       <div className="p-6 bg-gray-900 rounded-lg">
         <p className="text-red-400">No report data available.</p>

@@ -160,7 +160,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
         toast.error("Failed to load yearly report data");
       });
     }
-  }, [year, fetchYearlyAnalytics, user]);
+  }, [year, fetchYearlyAnalytics, user, yearLoading]);
 
   useEffect(() => {
     if (yearData) {
@@ -193,7 +193,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
       </div>
     );
 
-  if (!yearData)
+  if (!yearData && !yearLoading)
     return (
       <div className="p-6 bg-gray-900 rounded-lg">
         <p className="text-red-400">No yearly report data found.</p>
