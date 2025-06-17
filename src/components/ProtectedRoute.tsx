@@ -24,7 +24,7 @@ export default function ProtectedRoute({
 
   if (!ready)
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 min-w-full bg-gray-900">
         <Skeleton className="h-4 w-[250px]" />
         <Skeleton className="h-4 w-[200px]" />
       </div>

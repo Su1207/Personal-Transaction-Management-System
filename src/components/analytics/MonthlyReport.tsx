@@ -132,7 +132,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
   const { user, hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (hasHydrated && user?.id && month && year) {
+    if (hasHydrated && user && month && year) {
       useTransactionStore
         .getState()
         .fetchMonthlyAnalytics(year, month)
@@ -141,7 +141,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
           toast.error("Failed to load monthly report data.");
         });
     }
-  }, [month, year, hasHydrated, user, monthLoading]);
+  }, [month, year, hasHydrated, user]);
 
   const getMonthName = (monthNum: number) => {
     const months = [

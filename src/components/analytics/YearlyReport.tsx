@@ -163,7 +163,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
           toast.error("Failed to load yearly report data");
         });
     }
-  }, [year, yearLoading, user, hasHydrated]);
+  }, [year, user, hasHydrated]);
 
   useEffect(() => {
     if (yearData) {

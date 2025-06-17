@@ -13,7 +13,7 @@ export default function TransactionTable() {
   const { user, hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (user?.id && hasHydrated) {
+    if (user && hasHydrated) {
       useTransactionStore
         .getState()
         .fetchTransactions()
