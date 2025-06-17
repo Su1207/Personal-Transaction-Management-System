@@ -24,7 +24,7 @@ const Login = () => {
         description: `Welcome, ${username}!`,
         duration: 3000,
       });
-      window.location.href = "/";
+      navigate("/");
     } else {
       setError(result.error || "Login failed");
     }
