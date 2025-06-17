@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { YearlyReportData } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
+import { useAuthStore } from "@/lib/store/authStore";
 
 ChartJS.register(
   LineElement,
@@ -149,12 +150,16 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     monthlySavings: {},
   });
 
+  const { user, hasHydrated } = useAuthStore();
+
   useEffect(() => {
-    fetchYearlyAnalytics(year).catch((error) => {
-      console.error("Error fetching yearly analytics:", error);
-      toast.error("Failed to load yearly report data");
-    });
-  }, [year, fetchYearlyAnalytics, yearLoading]);
+    if (user && hasHydrated) {
+      fetchYearlyAnalytics(year).catch((error) => {
+        console.error("Error fetching yearly analytics:", error);
+        toast.error("Failed to load yearly report data");
+      });
+    }
+  }, [year, fetchYearlyAnalytics, yearLoading, user, hasHydrated]);
 
   useEffect(() => {
     if (yearData) {
@@ -176,7 +181,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     }
   }, [yearData]);
 
-  if (yearLoading)
+  if (yearLoading && !hasHydrated)
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />

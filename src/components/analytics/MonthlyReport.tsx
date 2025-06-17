@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { Skeleton } from "../ui/skeleton";
+import { useAuthStore } from "@/lib/store/authStore";
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -127,12 +128,16 @@ type monthlyProp = {
 const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
   const { monthData, monthLoading, fetchMonthlyAnalytics } =
     useTransactionStore();
+
+  const { user, hasHydrated } = useAuthStore();
   useEffect(() => {
-    fetchMonthlyAnalytics(year, month).catch((error) => {
-      console.error("Error fetching monthly analytics:", error);
-      toast.error("Failed to load monthly report data.");
-    });
-  }, [month, year, fetchMonthlyAnalytics]);
+    if (hasHydrated && user?.id && month && year) {
+      fetchMonthlyAnalytics(year, month).catch((error) => {
+        console.error("Error fetching monthly analytics:", error);
+        toast.error("Failed to load monthly report data.");
+      });
+    }
+  }, [month, year, fetchMonthlyAnalytics, hasHydrated, user]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
@@ -152,7 +157,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     return months[monthNum - 1] || monthNum;
   };
 
-  if (monthLoading) {
+  if (monthLoading && !hasHydrated) {
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />

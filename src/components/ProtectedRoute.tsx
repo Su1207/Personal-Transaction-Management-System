@@ -13,7 +13,7 @@ export default function ProtectedRoute({
   console.log("ProtectedRoute: hasHydrated:", hasHydrated, "user:", user);
 
   useEffect(() => {
-    if (hasHydrated && !user) {
+    if (hasHydrated && !user?.id) {
       navigate("/login");
     }
   }, [hasHydrated, user]);

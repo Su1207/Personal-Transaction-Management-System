@@ -14,9 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-  const { logout, user } = useAuthStore();
+  const { logout, user, hasHydrated } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -46,6 +47,22 @@ const Dashboard = () => {
   ];
 
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // last 5 years
+
+  if (!hasHydrated) {
+    return (
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <div className="p-6 text-white">User not authenticated</div>;
+  }
 
   return (
     <ProtectedRoute>

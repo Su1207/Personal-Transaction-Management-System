@@ -4,15 +4,21 @@ import { useEffect } from "react";
 import { useTransactionStore } from "@/lib/store/transactionStore";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function TransactionTable() {
   const { transactions, fetchTransactions, loading } = useTransactionStore();
 
+  const { user, hasHydrated } = useAuthStore();
+
   useEffect(() => {
-    fetchTransactions().catch((err) =>
-      toast.error("Error fetching transactions:", err)
-    );
-  }, [fetchTransactions]);
+    if (user?.id && hasHydrated) {
+      fetchTransactions().catch((err) =>
+        toast.error("Error fetching transactions:", err)
+      );
+    }
+  }, [fetchTransactions, user, hasHydrated]);
+
   console.log("TransactionTable data:", transactions);
 
   if (!transactions.length && loading) {
