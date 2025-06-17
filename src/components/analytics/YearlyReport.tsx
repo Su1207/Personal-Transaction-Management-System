@@ -143,7 +143,8 @@ type YearProp = {
 };
 
 const YearlyReport: React.FC<YearProp> = ({ year }) => {
-  const { fetchYearlyAnalytics, yearData, yearLoading } = useTransactionStore();
+  const yearData = useTransactionStore((state) => state.yearData);
+  const yearLoading = useTransactionStore((state) => state.yearLoading);
   const [reportData, setReportData] = useState<YearlyReportData>({
     monthlyIncome: {},
     monthlyExpense: {},
@@ -154,12 +155,15 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
 
   useEffect(() => {
     if (user && hasHydrated) {
-      fetchYearlyAnalytics(year).catch((error) => {
-        console.error("Error fetching yearly analytics:", error);
-        toast.error("Failed to load yearly report data");
-      });
+      useTransactionStore
+        .getState()
+        .fetchTransactions()
+        .catch((error) => {
+          console.error("Error fetching yearly analytics:", error);
+          toast.error("Failed to load yearly report data");
+        });
     }
-  }, [year, fetchYearlyAnalytics, yearLoading, user, hasHydrated]);
+  }, [year, yearLoading, user, hasHydrated]);
 
   useEffect(() => {
     if (yearData) {

@@ -7,17 +7,21 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/lib/store/authStore";
 
 export default function TransactionTable() {
-  const { transactions, fetchTransactions, loading } = useTransactionStore();
+  const transactions = useTransactionStore((state) => state.transactions);
+  const loading = useTransactionStore((state) => state.loading);
 
   const { user, hasHydrated } = useAuthStore();
 
   useEffect(() => {
     if (user?.id && hasHydrated) {
-      fetchTransactions().catch((err) =>
-        toast.error("Error fetching transactions:", err)
-      );
+      useTransactionStore
+        .getState()
+        .fetchTransactions()
+        .catch((err) =>
+          toast.error("Error fetching transactions: " + err.message)
+        );
     }
-  }, [fetchTransactions, user, hasHydrated]);
+  }, [user?.id, hasHydrated]);
 
   console.log("TransactionTable data:", transactions);
 

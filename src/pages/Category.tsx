@@ -10,17 +10,21 @@ import { useAuthStore } from "@/lib/store/authStore";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Category = () => {
-  const { fetchCategories, categories, loading } = useCategoryStore();
+  const categories = useCategoryStore((state) => state.categories);
+  const loading = useCategoryStore((state) => state.loading);
   const { user } = useAuthStore();
 
   useEffect(() => {
     if (user?.id) {
-      fetchCategories().catch((error) => {
-        console.error("Error fetching categories:", error);
-        toast.error("Failed to load categories");
-      });
+      useCategoryStore
+        .getState()
+        .fetchCategories()
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+          toast.error("Failed to load categories");
+        });
     }
-  }, [fetchCategories, user]);
+  }, [user]);
 
   const handleUpdate = (category: Category) => {
     console.log("Update category:", category);
