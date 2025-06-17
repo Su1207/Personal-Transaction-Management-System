@@ -1,7 +1,6 @@
 import MonthlyReport from "@/components/analytics/MonthlyReport";
 import YearlyReport from "@/components/analytics/YearlyReport";
 import { DialogButton } from "@/components/dialogButton/DialogButton";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import TransactionTable from "@/components/transactionTable/TransactionTable";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -15,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Dashboard = () => {
   const { logout, user, hasHydrated } = useAuthStore();
@@ -58,10 +58,6 @@ const Dashboard = () => {
         </div>
       </div>
     );
-  }
-
-  if (!user) {
-    return <div className="p-6 text-white">User not authenticated</div>;
   }
 
   return (
