@@ -14,7 +14,7 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     if (hasHydrated) {
-      if (!user?.id) {
+      if (!user) {
         navigate("/login", { replace: true });
       } else {
         setReady(true); // Ready to render only if authenticated
