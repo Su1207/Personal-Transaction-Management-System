@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "./ui/skeleton";
 
 export default function ProtectedRoute({
   children,
@@ -9,14 +10,25 @@ export default function ProtectedRoute({
 }) {
   const navigate = useNavigate();
   const { hasHydrated, user } = useAuthStore();
-
-  console.log("ProtectedRoute: hasHydrated:", hasHydrated, "user:", user);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (hasHydrated && !user?.id) {
-      navigate("/login");
+    if (hasHydrated) {
+      if (!user?.id) {
+        navigate("/login", { replace: true });
+      } else {
+        setReady(true); // Ready to render only if authenticated
+      }
     }
-  }, [hasHydrated, user]);
+  }, [hasHydrated, user, navigate]);
 
-  return <>{user && children}</>;
+  if (!ready)
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    );
+
+  return <>{children}</>;
 }

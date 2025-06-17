@@ -120,6 +120,7 @@ export const useAuthStore = create<AuthState>()(
           setTimeout(() => {
             console.log("🚀 Setting hasHydrated...");
             state.setHasHydrated();
+            console.log("✅ hasHydrated set.", state.hasHydrated);
           }, 1000);
         }
       },
