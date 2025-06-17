@@ -157,7 +157,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     if (user && hasHydrated) {
       useTransactionStore
         .getState()
-        .fetchTransactions()
+        .fetchYearlyAnalytics(year)
         .catch((error) => {
           console.error("Error fetching yearly analytics:", error);
           toast.error("Failed to load yearly report data");
