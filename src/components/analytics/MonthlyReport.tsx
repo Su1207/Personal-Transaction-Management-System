@@ -141,7 +141,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
           toast.error("Failed to load monthly report data.");
         });
     }
-  }, [month, year, hasHydrated, user?.id]);
+  }, [month, year, hasHydrated, user, monthLoading]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
