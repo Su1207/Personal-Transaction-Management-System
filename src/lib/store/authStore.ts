@@ -111,8 +111,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: () => (state) => {
-        state?.checkAuth();
+      onRehydrateStorage: () => async (state) => {
+        await state?.checkAuth();
         state?.setHasHydrated();
       },
     }
