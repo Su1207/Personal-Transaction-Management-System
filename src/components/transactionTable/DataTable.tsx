@@ -61,7 +61,7 @@ export function DataTable<TData extends Transaction, TValue>({
               transactionId={transactionId}
               transactionData={transactionData}
             />
-            <DeleteDialog transactionId={transactionId} />
+            <DeleteDialog type="transaction" id={transactionId} />
           </div>
 
           {/* Mobile dropdown */}
@@ -79,8 +79,8 @@ export function DataTable<TData extends Transaction, TValue>({
                 align="end"
                 className="bg-gray-800 border-gray-700"
               >
-                <div className="px-0 py-0">
-                  <DeleteDialog transactionId={transactionId} />
+                <div className="px-0 py-0 flex flex-col gap-1">
+                  <DeleteDialog type="transaction" id={transactionId} />
                   <UpdateDialog
                     transactionId={transactionId}
                     transactionData={transactionData}

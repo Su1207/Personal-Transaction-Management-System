@@ -8,6 +8,7 @@ import { CategoryDialog } from "@/components/dialogButton/CategoryDialog";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuthStore } from "@/lib/store/authStore";
 import { Skeleton } from "@/components/ui/skeleton";
+import DeleteDialog from "@/components/dialogButton/DeleteDialog";
 
 const Category = () => {
   const categories = useCategoryStore((state) => state.categories);
@@ -25,15 +26,6 @@ const Category = () => {
         });
     }
   }, [user, hasHydrated, isInitializing]);
-
-  const handleUpdate = (category: Category) => {
-    console.log("Update category:", category);
-    // Add your update logic here
-  };
-
-  const handleDelete = (category: Category) => {
-    console.log("Delete category:", category);
-  };
 
   const renderTypeCell = (type: string | null) => {
     if (!type) {
@@ -78,18 +70,6 @@ const Category = () => {
   const renderActionsCell = (category: Category) => {
     const canModify = !category.default;
 
-    if (isInitializing || loading) {
-      return (
-        <div className="flex items-center space-x-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-          </div>
-        </div>
-      );
-    }
-
     if (!canModify) {
       return (
         <div className="text-center">
@@ -102,21 +82,8 @@ const Category = () => {
       <div className="flex items-center justify-center gap-2">
         {/* Desktop buttons */}
         <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={() => handleUpdate(category)}
-            className="h-8 px-3 bg-blue-600 hover:bg-blue-700 border border-blue-600 text-white hover:text-white rounded text-sm flex items-center gap-1 transition-colors"
-          >
-            <Edit className="h-3 w-3" />
-            Edit
-          </button>
-
-          <button
-            onClick={() => handleDelete(category)}
-            className="h-8 px-3 bg-red-600 hover:bg-red-700 border border-red-600 text-white hover:text-white rounded text-sm flex items-center gap-1 transition-colors"
-          >
-            <Trash2 className="h-3 w-3" />
-            Delete
-          </button>
+          <CategoryDialog categoryData={category} />
+          <DeleteDialog id={category?.id} type="category" />
         </div>
 
         {/* Mobile dropdown */}
@@ -126,29 +93,25 @@ const Category = () => {
           </button>
 
           <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-            <button
-              onClick={() => {
-                handleUpdate(category);
-              }}
-              className="w-full text-left px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 flex items-center gap-2"
-            >
-              <Edit className="h-4 w-4" />
-              Edit
-            </button>
-            <button
-              onClick={() => {
-                handleDelete(category);
-              }}
-              className="w-full text-left px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 flex items-center gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </button>
+            <CategoryDialog categoryData={category} />
+            <DeleteDialog id={category?.id} type="category" />
           </div>
         </div>
       </div>
     );
   };
+
+  if (isInitializing || loading) {
+    return (
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProtectedRoute>

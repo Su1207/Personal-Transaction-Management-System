@@ -21,14 +21,22 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useCategoryStore } from "@/lib/store/categoryStore";
+import { Category } from "@/lib/types";
+import { updateCategory } from "@/services/api";
 
 type TransactionType = "INCOME" | "EXPENSE";
 
-export function CategoryDialog() {
-  const [type, setType] = useState<TransactionType>("EXPENSE");
+type CategoryDialogProps = {
+  categoryData?: Category;
+};
+
+export function CategoryDialog({ categoryData }: CategoryDialogProps) {
+  const [type, setType] = useState<TransactionType>(
+    categoryData ? categoryData.type : "EXPENSE"
+  );
   const [open, setOpen] = useState(false);
 
-  const { addCategory } = useCategoryStore();
+  const { addCategory, fetchCategories } = useCategoryStore();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,8 +48,18 @@ export function CategoryDialog() {
     };
 
     try {
-      await addCategory(payload);
-      toast.success("Category created successfully");
+      if (categoryData) {
+        const res = await updateCategory(categoryData.id, payload);
+        if (!res.success) {
+          toast.error("Failed to update category");
+          return;
+        }
+        await fetchCategories();
+        toast.success("Category updated successfully");
+      } else {
+        await addCategory(payload);
+        toast.success("Category created successfully");
+      }
       setOpen(false);
     } catch (error) {
       console.error("Category creation error:", error);
@@ -53,7 +71,7 @@ export function CategoryDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"outline"} className="bg-gray-800">
-          Create Category
+          {categoryData ? "Update" : "Create Category"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -68,7 +86,13 @@ export function CategoryDialog() {
 
           <div className="grid">
             <Label htmlFor="description">Category Name</Label>
-            <Input id="name" name="name" placeholder="Category Name" required />
+            <Input
+              id="name"
+              name="name"
+              placeholder="Category Name"
+              required
+              defaultValue={categoryData?.name}
+            />
           </div>
 
           <div className="grid">

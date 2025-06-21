@@ -11,36 +11,48 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { deleteTransaction } from "@/services/api";
+import { deleteCategory, deleteTransaction } from "@/services/api";
 import { useTransactionStore } from "@/lib/store/transactionStore";
+import { useCategoryStore } from "@/lib/store/categoryStore";
 
 interface DeleteDialogProps {
-  transactionId: number;
+  id: number;
+  type: "category" | "transaction";
 }
 
-const DeleteDialog = ({ transactionId }: DeleteDialogProps) => {
+const DeleteDialog = ({ id, type }: DeleteDialogProps) => {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
   const { fetchTransactions, fetchMonthlyAnalytics, fetchYearlyAnalytics } =
     useTransactionStore();
-  const handleDelete = async (transactionId: number) => {
+  const { fetchCategories } = useCategoryStore();
+  const handleDelete = async (id: number) => {
     try {
-      const res = await deleteTransaction(transactionId);
-      if (!res.success) {
-        toast.error(res.message || "Failed to delete item");
-        return;
+      if (type === "transaction") {
+        const res = await deleteTransaction(id);
+        if (!res.success) {
+          toast.error(res.message || "Failed to delete item");
+          return;
+        }
+        await fetchTransactions();
+        await fetchMonthlyAnalytics(currentYear, currentMonth);
+        await fetchYearlyAnalytics(currentYear);
+        toast.success("Transaction deleted successfully");
+      } else if (type === "category") {
+        console.log("Deleting category with ID:", id);
+        const res = await deleteCategory(id);
+        if (!res.success) {
+          toast.error(res.message || "Failed to delete category");
+          return;
+        }
+        await fetchCategories();
+        toast.success("Category deleted successfully");
       }
-      await fetchTransactions();
-      await fetchMonthlyAnalytics(currentYear, currentMonth);
-      await fetchYearlyAnalytics(currentYear);
       setOpen(false);
-      toast.success("Item deleted successfully");
     } catch (error) {
       console.error("Error deleting item:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete item"
-      );
+      toast.error((error as any)?.response?.data || "Failed to delete item");
     }
   };
 
@@ -55,8 +67,9 @@ const DeleteDialog = ({ transactionId }: DeleteDialogProps) => {
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this item? This action cannot be
-            undone.
+            Are you sure you want to delete this
+            {type === "category" ? "category" : "transaction"}? This action
+            cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -66,9 +79,7 @@ const DeleteDialog = ({ transactionId }: DeleteDialogProps) => {
           <Button
             variant="destructive"
             onClick={() => {
-              handleDelete(transactionId);
-              console.log("Item deleted");
-              setOpen(false);
+              handleDelete(id);
             }}
           >
             Confirm Delete

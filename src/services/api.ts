@@ -111,6 +111,41 @@ export const createCategories = async (category: CategoryData) => {
   }
 };
 
+export const updateCategory = async (id: number, category: CategoryData) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/categories/${id}`, category, {
+      withCredentials: true,
+    });
+    if (response?.data && (response.data as Category)) {
+      return { success: true, category: response.data as Category };
+    }
+    return { success: false, category: null };
+  } catch (error) {
+    console.error("Error updating category:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to update category"
+    );
+  }
+};
+
+export const deleteCategory = async (id: number) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/categories/${id}`, {
+      withCredentials: true,
+    });
+    if (response.status === 200) {
+      return { success: true, message: "Category deleted successfully" };
+    }
+    return { success: false, message: "Failed to delete category" };
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to delete category"
+    );
+  }
+};
+import { MonthlyReportData, YearlyRawItem } from "@/lib/types";
+
 export const getMonthlyAnalytics = async (year: number, month: number) => {
   const res = await axios.get(
     `${BASE_URL}/transactions/analytics/monthly?month=${month}&year=${year}`,
