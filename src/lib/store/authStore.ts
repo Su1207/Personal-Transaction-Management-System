@@ -7,6 +7,7 @@ const baseUrl =
 
 type AuthState = {
   user: User | null;
+  isInitializing: boolean; // Different from isAuthenticated
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;
   hasHydrated: boolean;
@@ -26,8 +27,9 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
+      isInitializing: true, // We're checking auth status
 
       setUser: (user) => set({ user }),
 
@@ -106,6 +108,9 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch {
           set({ user: null });
+        } finally {
+          // Always set initializing to false after check completes
+          set({ isInitializing: false });
         }
       },
     }),
@@ -113,12 +118,8 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       onRehydrateStorage: () => async (state) => {
         if (state) {
-          await state.checkAuth();
-          setTimeout(() => {
-            if (state) {
-              state.setHasHydrated();
-            }
-          }, 1000);
+          await state.checkAuth(); // This will set isInitializing to false
+          state.setHasHydrated();
         }
       },
     }

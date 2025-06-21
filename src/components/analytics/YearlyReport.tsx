@@ -151,10 +151,10 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     monthlySavings: {},
   });
 
-  const { user, hasHydrated } = useAuthStore();
+  const { user, hasHydrated, isInitializing } = useAuthStore();
 
   useEffect(() => {
-    if (user && hasHydrated) {
+    if (user && hasHydrated && !isInitializing && year) {
       useTransactionStore
         .getState()
         .fetchYearlyAnalytics(year)
@@ -163,7 +163,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
           toast.error("Failed to load yearly report data");
         });
     }
-  }, [year, user, hasHydrated]);
+  }, [year, user, hasHydrated, isInitializing]);
 
   useEffect(() => {
     if (yearData) {
@@ -185,7 +185,7 @@ const YearlyReport: React.FC<YearProp> = ({ year }) => {
     }
   }, [yearData]);
 
-  if (yearLoading)
+  if (isInitializing || yearLoading)
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />

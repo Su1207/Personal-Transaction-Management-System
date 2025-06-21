@@ -129,10 +129,10 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
   const monthData = useTransactionStore((state) => state.monthData);
   const monthLoading = useTransactionStore((state) => state.monthLoading);
 
-  const { user, hasHydrated } = useAuthStore();
+  const { user, hasHydrated, isInitializing } = useAuthStore();
 
   useEffect(() => {
-    if (hasHydrated && user && month && year) {
+    if (hasHydrated && user && month && year && !isInitializing) {
       useTransactionStore
         .getState()
         .fetchMonthlyAnalytics(year, month)
@@ -141,7 +141,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
           toast.error("Failed to load monthly report data.");
         });
     }
-  }, [month, year, hasHydrated, user]);
+  }, [month, year, hasHydrated, user, isInitializing]);
 
   const getMonthName = (monthNum: number) => {
     const months = [
@@ -172,7 +172,7 @@ const MonthlyReport: React.FC<monthlyProp> = ({ month, year }) => {
     "Expenses"
   );
 
-  if (monthLoading) {
+  if (isInitializing || monthLoading) {
     return (
       <div className="flex items-center space-x-4">
         <Skeleton className="h-12 w-12 rounded-full" />

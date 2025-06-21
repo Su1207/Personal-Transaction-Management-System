@@ -12,10 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Category = () => {
   const categories = useCategoryStore((state) => state.categories);
   const loading = useCategoryStore((state) => state.loading);
-  const { user } = useAuthStore();
+  const { user, isInitializing, hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (user?.id) {
+    if (user && hasHydrated && !isInitializing) {
       useCategoryStore
         .getState()
         .fetchCategories()
@@ -24,7 +24,7 @@ const Category = () => {
           toast.error("Failed to load categories");
         });
     }
-  }, [user]);
+  }, [user, hasHydrated, isInitializing]);
 
   const handleUpdate = (category: Category) => {
     console.log("Update category:", category);
@@ -78,7 +78,7 @@ const Category = () => {
   const renderActionsCell = (category: Category) => {
     const canModify = !category.default;
 
-    if (loading) {
+    if (isInitializing || loading) {
       return (
         <div className="flex items-center space-x-4">
           <Skeleton className="h-12 w-12 rounded-full" />
