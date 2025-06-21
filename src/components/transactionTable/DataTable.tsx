@@ -23,19 +23,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DeleteDialog from "../dialogButton/DeleteDialog";
+import UpdateDialog from "../dialogButton/UpdateDialog";
+import { Transaction } from "@/lib/types";
 
-interface RowWithId {
-  id: number;
-}
-
-interface DataTableProps<TData extends RowWithId, TValue> {
+interface DataTableProps<TData extends Transaction, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 
   showActions?: boolean;
 }
 
-export function DataTable<TData extends RowWithId, TValue>({
+export function DataTable<TData extends Transaction, TValue>({
   columns,
   data,
   showActions = true,
@@ -46,11 +44,23 @@ export function DataTable<TData extends RowWithId, TValue>({
     cell: ({ row }) => {
       const rowData = row.original;
       const transactionId = rowData?.id as number;
+      console.log(rowData);
+      const transactionData = {
+        description: rowData.description,
+        amount: rowData.amount,
+        type: rowData.type,
+        categoryId: rowData.categoryId,
+        date: rowData.date,
+      };
 
       return (
         <div className="flex items-center justify-center gap-2">
           {/* Desktop buttons */}
           <div className="hidden sm:flex items-center gap-2">
+            <UpdateDialog
+              transactionId={transactionId}
+              transactionData={transactionData}
+            />
             <DeleteDialog transactionId={transactionId} />
           </div>
 
@@ -71,22 +81,10 @@ export function DataTable<TData extends RowWithId, TValue>({
               >
                 <div className="px-0 py-0">
                   <DeleteDialog transactionId={transactionId} />
-                  {/* <div className="flex items-center w-full px-2 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 cursor-pointer rounded-sm">
-                      <svg
-                        className="h-4 w-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                      Delete
-                    </div> */}
+                  <UpdateDialog
+                    transactionId={transactionId}
+                    transactionData={transactionData}
+                  />
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>

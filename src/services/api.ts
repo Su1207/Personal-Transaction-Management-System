@@ -36,6 +36,31 @@ export const createTransaction = async (transaction: TransactionData) => {
   }
 };
 
+export const updateTransaction = async (
+  id: number,
+  transaction: TransactionData
+) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/transactions/${id}`,
+      transaction,
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response?.data && (response.data as Transaction)) {
+      return { success: true, transaction: response.data as Transaction };
+    }
+    return { success: false, transaction: null };
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to update transaction"
+    );
+  }
+};
+
 export const deleteTransaction = async (id: number) => {
   try {
     const response = await axios.delete(`${BASE_URL}/transactions/${id}`, {

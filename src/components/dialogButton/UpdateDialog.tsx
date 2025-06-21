@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -19,21 +17,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Category } from "@/lib/types";
-import { getCategories } from "@/services/api";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { TransactionType } from "./DialogButton";
 import { toast } from "sonner";
-import { useTransactionStore } from "@/lib/store/transactionStore";
+import { updateTransaction } from "@/services/api";
+import { TransactionData } from "@/lib/types";
 import { useCategoryStore } from "@/lib/store/categoryStore";
+import { useTransactionStore } from "@/lib/store/transactionStore";
 
-export type TransactionType = "INCOME" | "EXPENSE";
+type TransactionUpdateProps = {
+  transactionId: number;
+  transactionData: TransactionData;
+};
 
-export function DialogButton() {
-  const [type, setType] = useState<TransactionType>("EXPENSE");
+const UpdateDialog: React.FC<TransactionUpdateProps> = ({
+  transactionId,
+  transactionData,
+}) => {
+  const [type, setType] = useState<TransactionType>(transactionData?.type);
   const [open, setOpen] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>();
-
-  const { addTransaction } = useTransactionStore();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(
+    transactionData?.categoryId
+  );
   const { categories, fetchCategories } = useCategoryStore();
+  const { fetchTransactions, fetchMonthlyAnalytics, fetchYearlyAnalytics } =
+    useTransactionStore();
+
+  const currentMonth = new Date().getFullYear();
+  const currentYear = new Date().getMonth() + 1;
 
   useEffect(() => {
     fetchCategories().catch((error) => {
@@ -44,48 +56,44 @@ export function DialogButton() {
 
   const filteredCategories = categories.filter((cat) => cat.type === type);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-
     if (!selectedCategoryId) {
-      toast.error("Please select a category");
-      //   console.error("No category selected");
+      toast.error("No category selected");
       return;
     }
-
     const payload = {
       description: (formData.get("description") as string) || "",
       amount: parseFloat(formData.get("amount") as string),
-      type,
-      categoryId: selectedCategoryId!,
       date: new Date(formData.get("date") as string).toISOString(),
+      type,
+      categoryId: selectedCategoryId,
     };
-
     try {
-      await addTransaction(payload);
-      toast.success("Transaction created successfully");
+      await updateTransaction(transactionId, payload);
+      toast.success("Transaction updated successfully");
+      await fetchTransactions();
+      await fetchMonthlyAnalytics(currentYear, currentMonth);
+      await fetchYearlyAnalytics(currentYear);
       setOpen(false);
-      setSelectedCategoryId(undefined);
     } catch (error) {
-      console.error("Transaction creation error:", error);
-      toast.error("Something went wrong");
+      console.error("Transaction update error:", error);
+      toast.error(error instanceof Error ? error.message : String(error));
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="bg-gray-800">
-          Create Transaction
-        </Button>
+        <Button variant="secondary">Update</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <form className="m-0 grid" onSubmit={handleSubmit}>
+        <form className="m-0 grid" onSubmit={handleUpdate}>
           <DialogHeader>
             <DialogTitle>Transaction Details</DialogTitle>
             <DialogDescription>
-              Fill all the required details here. Click save when you&apos;re
+              Fill all the required details here. Click update when you&apos;re
               done.
             </DialogDescription>
           </DialogHeader>
@@ -96,6 +104,7 @@ export function DialogButton() {
               id="description"
               name="description"
               placeholder="Short description"
+              defaultValue={transactionData.description}
               required
             />
           </div>
@@ -107,6 +116,7 @@ export function DialogButton() {
               name="amount"
               type="number"
               step="0.01"
+              defaultValue={transactionData.amount.toString()}
               placeholder="Enter amount"
               required
             />
@@ -114,7 +124,13 @@ export function DialogButton() {
 
           <div className="grid">
             <Label htmlFor="date">Date</Label>
-            <Input id="date" name="date" type="datetime-local" required />
+            <Input
+              id="date"
+              name="date"
+              type="datetime-local"
+              required
+              defaultValue={transactionData?.date}
+            />
           </div>
 
           <div className="grid">
@@ -123,7 +139,7 @@ export function DialogButton() {
               value={type}
               onValueChange={(val: TransactionType) => {
                 setType(val);
-                setSelectedCategoryId(undefined); // Reset category when type changes
+                setSelectedCategoryId(transactionData?.categoryId);
               }}
             >
               <SelectTrigger>
@@ -173,4 +189,6 @@ export function DialogButton() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default UpdateDialog;
