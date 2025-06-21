@@ -15,59 +15,43 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import DeleteDialog from "../dialogButton/DeleteDialog";
 
-interface DataTableProps<TData, TValue> {
+interface RowWithId {
+  id: number;
+}
+
+interface DataTableProps<TData extends RowWithId, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onUpdate?: (row: TData) => void;
-  onDelete?: (row: TData) => void;
+
   showActions?: boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowWithId, TValue>({
   columns,
   data,
-  onUpdate,
-  onDelete,
   showActions = true,
 }: DataTableProps<TData, TValue>) {
-  // Create actions column
   const actionsColumn: ColumnDef<TData, TValue> = {
     id: "actions",
     header: ({}) => <div className="text-center">Action</div>,
     cell: ({ row }) => {
       const rowData = row.original;
+      const transactionId = rowData?.id as number;
 
       return (
         <div className="flex items-center justify-center gap-2">
           {/* Desktop buttons */}
           <div className="hidden sm:flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              // onClick={() => onUpdate(rowData)}
-              className="h-8 px-3 bg-blue-600 hover:bg-blue-700 border-blue-600 text-white hover:text-white"
-            >
-              <Edit className="h-3 w-3 mr-1" />
-              Edit
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              // onClick={() => onDelete(rowData)}
-              className="h-8 px-3 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              Delete
-            </Button>
+            <DeleteDialog transactionId={transactionId} />
           </div>
 
           {/* Mobile dropdown */}
@@ -85,24 +69,25 @@ export function DataTable<TData, TValue>({
                 align="end"
                 className="bg-gray-800 border-gray-700"
               >
-                {onUpdate && (
-                  <DropdownMenuItem
-                    onClick={() => onUpdate(rowData)}
-                    className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                )}
-                {onDelete && (
-                  <DropdownMenuItem
-                    onClick={() => onDelete(rowData)}
-                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20 cursor-pointer"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                )}
+                <div className="px-0 py-0">
+                  <DeleteDialog transactionId={transactionId} />
+                  {/* <div className="flex items-center w-full px-2 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 cursor-pointer rounded-sm">
+                      <svg
+                        className="h-4 w-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      Delete
+                    </div> */}
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

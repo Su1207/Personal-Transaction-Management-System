@@ -36,6 +36,23 @@ export const createTransaction = async (transaction: TransactionData) => {
   }
 };
 
+export const deleteTransaction = async (id: number) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/transactions/${id}`, {
+      withCredentials: true,
+    });
+    if (response.status === 200) {
+      return { success: true, message: "Transaction deleted successfully" };
+    }
+    return { success: false, message: "Failed to delete transaction" };
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to delete transaction"
+    );
+  }
+};
+
 export const getCategories = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/categories`, {

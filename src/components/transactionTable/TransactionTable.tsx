@@ -23,6 +23,7 @@ export default function TransactionTable() {
     }
   }, [user, hasHydrated, isInitializing]);
 
+  console.log("TransactionTable initializing:", isInitializing);
   console.log("TransactionTable data:", transactions);
 
   if (isInitializing || loading) {
