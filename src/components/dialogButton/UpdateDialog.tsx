@@ -44,8 +44,8 @@ const UpdateDialog: React.FC<TransactionUpdateProps> = ({
   const { fetchTransactions, fetchMonthlyAnalytics, fetchYearlyAnalytics } =
     useTransactionStore();
 
-  const currentMonth = new Date().getFullYear();
-  const currentYear = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
     fetchCategories().catch((error) => {
